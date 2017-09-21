@@ -25,19 +25,20 @@
             <div class="slds-col">
                 <ul class="slds-accordion">
                     <li class="slds-accordion__list-item">
-                        <section class="slds-accordion__section">
+                        <section ng-class="emailTemplateSelectionAccordion">
                             <div class="slds-accordion__summary">
                                 <h3 class="slds-text-heading_small slds-accordion__summary-heading">
-                                    <button aura-controls="accordion-details-01" aria-expanded="true" class="slds-button slds-button-reset slds-accordion__summary-action">
+                                    <button aura-controls="accordion-details-01" aria-expanded="false" class="slds-button slds-button_reset slds-accordion__summary-action">
                                         <svg class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
                                             <use xmlns:link="https://www.w3org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS,'/assets/icons/utility-sprite/svg/symbols.svg#switch')}"/>
                                         </svg>
+                                        <span class="slds-truncate" title="Template Selection">Template Selection</span>
                                     </button>
-                                    <span class="slds-truncate" title="Template Selection">Template Selection</span>
                                 </h3>
                             </div>
+
                             <div aria-hidden="true" class="slds-accordion__content" id="accordion-details-01">
-                                
+
                             </div>
                         </section>
                     </li>
@@ -49,11 +50,16 @@
     <script type="text/javascript">
         var pageApp = angular
                         .module('pageApp',[])
-                        factory('SFDCFactory',['$rootScope','$log','$q',function($rootScope,$q,$log){
+                        .factory('SFDCFactory',['$rootScope','$log','$q',function($rootScope,$log,$q){
 
                         }])
                         .controller('MainController',['$scope','$window','$log',function($scope,$window,$log){
                             $log.info('Application Started.');
+                            $scope.emailTemplateSelectionAccordion = {
+                                "slds-accordion__section":true,
+                                "slds-is-open":false
+                            };
+
                         }]);
     </script>
 </html>
