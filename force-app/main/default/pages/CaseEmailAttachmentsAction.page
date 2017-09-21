@@ -36,6 +36,9 @@
                                     <span class="slds-truncate" title="Template Selection">Template Selection</span>
                                 </h3>
                             </div>
+                            <div aria-hidden="true" class="slds-accordion__content" id="accordion-details-01">
+                                
+                            </div>
                         </section>
                     </li>
                 </ul>
