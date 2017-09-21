@@ -1,6 +1,6 @@
 <apex:page 
     applyBodyTag="true" 
-    applyHtmlTag="true" 
+    applyHtmlTag="false" 
     cache="false" 
     contentType="tex/html" 
     docType="html-5.0"
@@ -13,6 +13,7 @@
     sidebar="false"
     standardStylesheets="true"
     title="Case Email with Attachments">
+<html  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
     <apex:includeScript id="AngularJSCore" value="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"/>
 
     <apex:slds />
@@ -25,6 +26,11 @@
                         <section class="slds-accordion__section">
                             <div class="slds-accordion__summary">
                                 <h3 class="slds-text-heading_small slds-accordion__summary-heading">
+                                    <button aura-controls="accordion-details-01" aria-expanded="true" class="slds-button slds-button-reset slds-accordion__summary-action">
+                                        <svg class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                            <use xmlns:link="https://www.w3org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS,'/assets/icons/utility-sprite/svg/symbols.svg#switch')}"/>
+                                        </svg>
+                                    </button>
                                     <span class="slds-truncate" title="Template Selection">Template Selection</span>
                                 </h3>
                             </div>
@@ -42,8 +48,8 @@
 
                         }])
                         .controller('MainController',['$scope','$window','$log',function($scope,$window,$log){
-
+                            $log.info('Application Started.');
                         }]);
     </script>
-
+</html>
 </apex:page>
