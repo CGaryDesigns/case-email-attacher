@@ -1,0 +1,49 @@
+<apex:page 
+    applyBodyTag="true" 
+    applyHtmlTag="true" 
+    cache="false" 
+    contentType="tex/html" 
+    docType="html-5.0"
+    id="CaseEmailAttachmentsAction"
+    label="CaseEmailAttachmentsAction"
+    language="en-US"
+    name="CaseEMailAttachmentsAction"
+    showChat="false"
+    showHeader="false"
+    sidebar="false"
+    standardStylesheets="true"
+    title="Case Email with Attachments">
+    <apex:includeScript id="AngularJSCore" value="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"/>
+
+    <apex:slds />
+
+    <div class="slds-scope" ng-app="pageApp">
+        <div class="slds-grid" ng-controller="MainController">
+            <div class="slds-col">
+                <ul class="slds-accordion">
+                    <li class="slds-accordion__list-item">
+                        <section class="slds-accordion__section">
+                            <div class="slds-accordion__summary">
+                                <h3 class="slds-text-heading_small slds-accordion__summary-heading">
+                                    <span class="slds-truncate" title="Template Selection">Template Selection</span>
+                                </h3>
+                            </div>
+                        </section>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var pageApp = angular
+                        .module('pageApp',[])
+                        factory('SFDCFactory',['$rootScope','$log','$q',function($rootScope,$q,$log){
+
+                        }])
+                        .controller('MainController',['$scope','$window','$log',function($scope,$window,$log){
+
+                        }]);
+    </script>
+
+</apex:page>
