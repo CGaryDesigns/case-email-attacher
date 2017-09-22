@@ -65,4 +65,19 @@ global with sharing class CaseEmailAttachmentsActionExt {
         Messaging.SingleEmailMessage mess = Messaging.renderStoredEmailTemplate(templateId, contactId, caseId);
         return JSON.serialize(mess);
     }
+    /**
+     * this method is responsible for getting the list of file attachments to the case
+     *
+     * @param String caseId                     - the Case Id to look for related attachments to.
+     * @return Map<String,String>               - a map of file name to contentIds.
+     **/
+    @RemoteAction
+    global static GetCaseAttachments(String caseId){
+        List<ContentDocument> fileList = [SELECT Id, Title, LatestPublishedVersionId FROM ContentDocument WHERE ParentId = :caseId ];
+        Map<String,String> returnMap = new Map<String,String>();
+        for(ContentDocument doc:fileList){
+            returnMap.put(doc.LastPublishedVersionId,doc.Title);
+        }
+        return returnMap;
+    }
 }

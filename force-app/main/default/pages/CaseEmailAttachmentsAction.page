@@ -73,6 +73,19 @@
                                             </div>
 
                                         </div>
+
+                                        <div class="slds-text-body_regular">
+                                            {{emailData.debug}}
+                                        </div>
+
+                                        <div class="slds-text-body_regular">
+                                            <ul class="slds-has-dividers_top">
+                                                <li ng-repeat="fileItem in fileList">
+                                                    {{fileItem.name}}
+                                                </li>
+                                            </ul>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -152,19 +165,44 @@
                                         escape:false,
                                         timeout:60000
                                     }
-                                )
+                                );
                                 return deferred.promise;
 
                             }
+
+                            factoryObj.GetFileList = function(caseId){
+                                var deferred = $q.defer();
+                                Visualforce.remoting.Manager.invokeAction(
+                                    '{!$RemoteAction.CaseEmailAttachmentsActionExt.GetCaseAttachments}',
+                                    caseId,
+                                    function(result,event){
+                                        $rootScope.$apply(function(){
+                                            if(event.status){
+                                                deferred.resolve(result);
+                                            } else {
+                                                deferrred.reject(event.message);
+                                            }
+                                        });
+                                    },
+                                    {
+                                        escape:false,
+                                        timeout: 60000
+                                    }
+                                );
+                                return deferred.promise;
+                            }
+
                             return factoryObj;
                         }])
-                        .controller('MainController',['$scope','$window','$log','SFDCFactory',function($scope,$window,$log,SFDCFactory){
+                        .controller('MainController',['$scope','$window','$log','$q','SFDCFactory',function($scope,$window,$log,$q,SFDCFactory){
                             
                             //the object that controls the class for showing template info
                             $scope.emailTemplateSelectionAccordion = {
                                 "slds-accordion__section":true,
                                 "slds-is-open":false
                             };
+                            //variable to hold list of case files
+                            $scope.fileList = [];
                             //variable hold list of Email Template folders
                             $scope.folderList = [];
                             //variable to hold list of Email Templates
@@ -202,7 +240,7 @@
 
                             $scope.generateTemplate = function(){
                                 var templateId = $scope.templateId[0].id;
-                                SFDCFactory.GetCompiledEmailBody(templateId,$scope.caseId,$scope.contactId).then(
+                                SFDCFactory.ObtainGeneratedEmail(templateId,$scope.caseId,$scope.contactId).then(
                                     function(result){
                                         $log.info(result);
                                         $scope.emailData = result;
@@ -218,7 +256,27 @@
                              * here.
                              **/
                             var initialize = function(){
+                                var InitializationPromiseArray = [
+                                    SFDCFactory.ObtainFolderList(),
+                                    SFDCFactory.GetFileList($scope.caseId)
+                                ];
+                                $q.all(InitializationPromiseArray).then(
+                                    function(resultArray){
+                                        for(key in resultArray[0]){
+                                            var obj = { 'name':key, 'id':resultArray[0][key] };
+                                            $scope.folderList.push(obj);
+                                        }
+                                        for(key in resultArray[1]){
+                                            var obj = { 'name':key, 'id':resultArray[1][key] };
+                                            $scope.fileList.push(obj);
+                                        }
+                                    },
+                                    function(rejectionArray){
+                                        $log.error(rejectionArray);
+                                    }
+                                )
                                 //populate the folder select list
+                                /*
                                 SFDCFactory.ObtainFolderList().then(
                                     function(result){
                                         for(key in result){
@@ -230,6 +288,7 @@
                                         $log.error('There was a problem: ' + reject);
                                     }
                                 );
+                                */
                                 //signal that the application has started
                                 $log.info('Application Started.');
                             }
