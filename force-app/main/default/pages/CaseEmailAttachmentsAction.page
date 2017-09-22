@@ -28,7 +28,7 @@
                         <section ng-class="emailTemplateSelectionAccordion">
                             <div class="slds-accordion__summary">
                                 <h3 class="slds-text-heading_small slds-accordion__summary-heading">
-                                    <button aura-controls="accordion-details-01" aria-expanded="false" class="slds-button slds-button_reset slds-accordion__summary-action">
+                                    <button aura-controls="accordion-details-01" aria-expanded="false" class="slds-button slds-button_reset slds-accordion__summary-action" ng-click="toggleTemplateSelection();">
                                         <svg class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
                                             <use xmlns:link="https://www.w3org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS,'/assets/icons/utility-sprite/svg/symbols.svg#switch')}"/>
                                         </svg>
@@ -51,14 +51,39 @@
         var pageApp = angular
                         .module('pageApp',[])
                         .factory('SFDCFactory',['$rootScope','$log','$q',function($rootScope,$log,$q){
-
+                            var factoryObj = {};
+                            factoryObj.ObtainFolderList = function(){
+                                var deferred = $q.defer();
+                                Visualforce.remoting.Manager.invokeAction(
+                                    '{!$RemoteAction.CaseEmailAttachmentsActionExt.ObtainEmailTemplateFolders}',
+                                    function(result,event){
+                                        $rootScope.$apply(function(){
+                                            if(event.status){
+                                                deferred.resolve(result);
+                                            } else {
+                                                deferred.reject(event.message);
+                                            }
+                                        });
+                                    },
+                                    {
+                                        escape:false,
+                                        timeout:60000
+                                    }
+                                )
+                                return deferred.promise;
+                            }
+                            return factoryObj;
                         }])
-                        .controller('MainController',['$scope','$window','$log',function($scope,$window,$log){
+                        .controller('MainController',['$scope','$window','$log','SFDCFactory',function($scope,$window,$log,SFDCFactory){
                             $log.info('Application Started.');
                             $scope.emailTemplateSelectionAccordion = {
                                 "slds-accordion__section":true,
                                 "slds-is-open":false
                             };
+
+                            $scope.toggleTemplateSelection = function(){
+                                $scope.emailTemplateSelectionAccordion['slds-is-open']  = !$scope.emailTemplateSelectionAccordion['slds-is-open'];
+                            }
 
                         }]);
     </script>
