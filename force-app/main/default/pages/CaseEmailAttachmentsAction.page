@@ -72,6 +72,7 @@
                                     function(result,event){
                                         $rootScope.$apply(function(){
                                             if(event.status){
+                                                $log.info(result);
                                                 deferred.resolve(result);
                                             } else {
                                                 deferred.reject(event.message);
@@ -116,6 +117,7 @@
                                     function(result){
                                         for(key in result){
                                             var obj = { 'name':key, 'id':result[key]};
+                                            $log.info('Transformed Object: ' + JSON.stringify(obj));
                                             $scope.folderList.push(obj);
                                         }
                                     },
