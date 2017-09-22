@@ -108,7 +108,6 @@
                                     function(result,event){
                                         $rootScope.$apply(function(){
                                             if(event.status){
-                                                $log.info(result);
                                                 deferred.resolve(result);
                                             } else {
                                                 deferred.reject(event.message);
@@ -262,6 +261,7 @@
                                 ];
                                 $q.all(InitializationPromiseArray).then(
                                     function(resultArray){
+                                        $log.info(resultArray);
                                         for(key in resultArray[0]){
                                             var obj = { 'name':key, 'id':resultArray[0][key] };
                                             $scope.folderList.push(obj);
