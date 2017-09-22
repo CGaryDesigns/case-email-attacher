@@ -72,7 +72,7 @@ global with sharing class CaseEmailAttachmentsActionExt {
      * @return Map<String,String>               - a map of file name to contentIds.
      **/
     @RemoteAction
-    global static GetCaseAttachments(String caseId){
+    global static Map<String,String> GetCaseAttachments(String caseId){
         List<ContentDocument> fileList = [SELECT Id, Title, LatestPublishedVersionId FROM ContentDocument WHERE ParentId = :caseId ];
         Map<String,String> returnMap = new Map<String,String>();
         for(ContentDocument doc:fileList){
