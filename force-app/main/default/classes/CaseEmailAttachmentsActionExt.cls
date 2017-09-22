@@ -6,7 +6,7 @@
  * @author Cloud Performer <cgary@cloudperformer.com>
  * @version 1.0
  **/ 
-public with sharing class CaseEmailAttachmentsActionExt {
+global with sharing class CaseEmailAttachmentsActionExt {
     /**
      * Constructor
      **/
@@ -26,7 +26,7 @@ public with sharing class CaseEmailAttachmentsActionExt {
      * @return Map<String,String> a map of Folders and the Corresponding Ids
      **/
     @RemoteAction
-    public static Map<String,String> ObtainEmailTemplateFolders(){
+    global static Map<String,String> ObtainEmailTemplateFolders(){
         //get the folders
         List<Folder> folderList = [SELECT Id, DeveloperName, Name, Type FROM Folder WHERE Type='Email'];
         Map<String,String> returnMap = new Map<String,String>();
@@ -42,7 +42,8 @@ public with sharing class CaseEmailAttachmentsActionExt {
      * @param String folderId                       - the FolderId to look up
      * @return Map<String,String>                   - a Map of Template Names to TemplateIds.
      **/
-    public static Map<String,String> ObtainEmailTemplates(String folderId){
+    @RemoteAction
+    global static Map<String,String> ObtainEmailTemplates(String folderId){
         List<EmailTemplate> templateList = [SELECT Id, Name FROM EmailTemplate WHERE FolderId =:folderId];
         Map<String,String> returnMap = new Map<String,String>();
         for(EmailTemplate et:templateList){
