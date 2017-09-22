@@ -38,7 +38,20 @@
                             </div>
 
                             <div aria-hidden="true" class="slds-accordion__content" id="accordion-details-01">
-
+                                <div class="slds-grid slds-grid_pull-padded-medium">
+                                    <div class="slds-col slds-p-horizontal_medium">
+                                        <div class="slds-form slds-form_stacked">
+                                            <div class="slds-form-element">
+                                                <label class="slds-form-element__label" for="select-template-folder">Template Folder</label>
+                                                <div class="slds-form-element__control">
+                                                    <div class="slds-select_container">
+                                                        <select ng-model="templateFolder" name="select-template-folder" multiple="false" ng-options="option.name for option in folderList"></select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </section>
                     </li>
@@ -75,15 +88,46 @@
                             return factoryObj;
                         }])
                         .controller('MainController',['$scope','$window','$log','SFDCFactory',function($scope,$window,$log,SFDCFactory){
-                            $log.info('Application Started.');
+                            
+                            //the object that controls the class for showing template info
                             $scope.emailTemplateSelectionAccordion = {
                                 "slds-accordion__section":true,
                                 "slds-is-open":false
                             };
-
+                            //variable hold list of Email Template folders
+                            $scope.folderList = [];
+                            //variable to hold selected folder
+                            $scope.templateFolder = {};
+                            /**
+                             * function responsible for toggling the visibility
+                             * of the Template selection area
+                             **/
                             $scope.toggleTemplateSelection = function(){
                                 $scope.emailTemplateSelectionAccordion['slds-is-open']  = !$scope.emailTemplateSelectionAccordion['slds-is-open'];
                             }
+                            /**
+                             * function that will be called to represent the initialization
+                             * all processes that need to be run to set up the page are to be called
+                             * here.
+                             **/
+                            var initialize = function(){
+                                //populate the folder select list
+                                SFDCFactory.ObtainFolderList().then(
+                                    function(result){
+                                        for(key in result){
+                                            var obj = { 'name':key, 'id':result[key]};
+                                            $scope.folderList.push(obj);
+                                        }
+                                    },
+                                    function(reject){
+                                        $log.error('There was a problem: ' + reject);
+                                    }
+                                );
+                                //signal that the application has started
+                                $log.info('Application Started.');
+                            }
+
+                            initialize();
 
                         }]);
     </script>
