@@ -52,11 +52,16 @@
                                                 </div>
                                             </div>
                                             <div class="slds-form-element">
+                                                <button class="slds-button slds-button_neutral">
+                                                    <span class="slds-text-not-selected" ng-click="selectFolder($scope.templateFoler)">Select Folder</span>
+                                                </button>
+                                            </div>
+                                            <div class="slds-form-element">
                                                 <label class="slds-form-element__label" for="select-template">Template</label>
                                                 <div class="slds-form-element__control">
                                                     <div class="slds-select_container">
                                                         <select ng-model="templateId" name="select-template" multiple="false" size="1" class="slds-select">
-                                                            
+
                                                         </select>
                                                     </div>
                                                 </div>
@@ -131,10 +136,13 @@
                             };
                             //variable hold list of Email Template folders
                             $scope.folderList = [];
+                            //variable to hold list of Email Templates
+                            $scope.templateList = [];
                             //variable to hold selected folder
                             $scope.templateFolder = '';
                             //variable to hold the template Id
                             $scope.templateId = '';
+                            
                             /**
                              * function responsible for toggling the visibility
                              * of the Template selection area
@@ -142,8 +150,19 @@
                             $scope.toggleTemplateSelection = function(){
                                 $scope.emailTemplateSelectionAccordion['slds-is-open']  = !$scope.emailTemplateSelectionAccordion['slds-is-open'];
                             }
-                            $scope.selectFolder = function(){
-
+                            $scope.selectFolder = function(folderId){
+                                SFDCFactory.ObtainTemplateList(folderId).then(
+                                    function(result){
+                                        $scope.templateList = [];
+                                        for(key in result){
+                                            var obj = {'name':key,'id':result[key]};
+                                            $scope.templateList.push(obj);
+                                        }
+                                    },
+                                    function(reject){
+                                        $log.error('There was a problem: ' + reject);
+                                    }
+                                );
                             }
                             /**
                              * function that will be called to represent the initialization
