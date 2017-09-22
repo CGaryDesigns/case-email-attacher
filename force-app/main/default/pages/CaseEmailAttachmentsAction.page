@@ -53,7 +53,7 @@
                                             </div>
                                             <div class="slds-form-element">
                                                 <button class="slds-button slds-button_neutral">
-                                                    <span class="slds-text-not-selected" ng-click="selectFolder($scope.templateFoler[0].id)">Select Folder</span>
+                                                    <span class="slds-text-not-selected" ng-click="selectFolder(templateFoler[0].id)">Select Folder</span>
                                                 </button>
                                             </div>
                                             <div class="slds-form-element">
@@ -66,6 +66,12 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="slds-form-element">
+                                                <button class="slds-button slds-button_neutral">
+                                                    <span class="slds-text-not-selected" ng-click="generateTemplate(templateId[0].id)">Generate Template</span>
+                                                </button>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -125,6 +131,31 @@
                                 );
                                 return deferred.promise;
                             }
+
+                            factoryObj.ObtainGeneratedEmail = function(templateId, caseId, contactId){
+                                var deferred = $q.defer();
+                                Visualforce.remoting.Manager.invokeAction(
+                                    '{!$RemoteAction.CaseEmailAttachmentsActionExt.GetCompiledEmailBody}',
+                                    templateId,
+                                    caseId,
+                                    contactId,
+                                    function(result,event){
+                                        $rootScope.$apply(function(){
+                                            if(event.status){
+                                                deferred.resolve(JSON.parse(result));
+                                            } else {
+                                                deferred.reject(event.message);
+                                            }
+                                        });
+                                    },
+                                    {
+                                        escape:false,
+                                        timeout:60000
+                                    }
+                                )
+                                return deferred.promise;
+
+                            }
                             return factoryObj;
                         }])
                         .controller('MainController',['$scope','$window','$log','SFDCFactory',function($scope,$window,$log,SFDCFactory){
@@ -142,6 +173,9 @@
                             $scope.templateFolder = {};
                             //variable to hold the template Id
                             $scope.templateId = '';
+                            $scope.caseId = '{!case.Id}';
+                            $scope.contactId = '{!case.ContactId}';
+                            $scope.emailData = {};
                             
                             /**
                              * function responsible for toggling the visibility
@@ -158,6 +192,18 @@
                                             var obj = {'name':key,'id':result[key]};
                                             $scope.templateList.push(obj);
                                         }
+                                    },
+                                    function(reject){
+                                        $log.error('There was a problem: ' + reject);
+                                    }
+                                );
+                            }
+
+                            $scope.generateTemplate = function(templateId){
+                                SFDCFactory.GetCompiledEmailBody(templateId,$scope.caseId,$scope.contactId).then(
+                                    function(result){
+                                        $log.info(result);
+                                        $scope.emailData = result;
                                     },
                                     function(reject){
                                         $log.error('There was a problem: ' + reject);

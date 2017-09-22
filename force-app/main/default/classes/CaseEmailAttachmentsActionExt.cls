@@ -51,4 +51,18 @@ global with sharing class CaseEmailAttachmentsActionExt {
         }
         return returnMap;
     }
+    /**
+     * this method is designed to provide the compiled body of an Email Template
+     * based on the template Id passed in, the Case Id and the Contact Id Passed in
+     *
+     * @param String templateId                     - the template Id to pass in
+     * @param String caseId                         - the case Id to use
+     * @param String contactId                      - the Contact Id to use to 
+     * @return String emailbody                     - the email body to use
+     **/
+    @RemotAction
+    global static String GetCompiledEmailBody(String templateId, String caseId, String contactId){
+        Messaging.SingleEmailMessage mess = Messaging.renderStoredEmailTemplate(templateId, contactId, caseId);
+        return JSON.serialize(mess);
+    }
 }
