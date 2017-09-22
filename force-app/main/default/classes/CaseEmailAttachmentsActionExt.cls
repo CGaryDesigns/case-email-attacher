@@ -35,4 +35,19 @@ public with sharing class CaseEmailAttachmentsActionExt {
         }
         return returnMap;
     }
+    /**
+     * the purpose of this method is to provide a list of email templates
+     * based on a FolderId that is passed in.
+     *
+     * @param String folderId                       - the FolderId to look up
+     * @return Map<String,String>                   - a Map of Template Names to TemplateIds.
+     **/
+    public static Map<String,String> ObtainEmailTemplates(String folderId){
+        List<EmailTemplate> templateList = [SELECT Id, Name FROM EmailTemplate WHERE FolderId =:folderId];
+        Map<String,String> returnMap = new Map<String,String>();
+        for(EmailTemplate et:templateList){
+            returnMap.put(et.Name, et.Id);
+        }
+        return returnMap;
+    }
 }

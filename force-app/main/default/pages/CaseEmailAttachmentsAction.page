@@ -45,9 +45,17 @@
                                                 <label class="slds-form-element__label" for="select-template-folder">Template Folder</label>
                                                 <div class="slds-form-element__control">
                                                     <div class="slds-select_container">
-                                                        <select ng-model="templateFolder" name="select-template-folder" multiple="false">
+                                                        <select ng-model="templateFolder" name="select-template-folder" multiple="false" size="1" class="slds-select">
                                                             <option ng-repeat="option in folderList" value="{{option.id}}">{{option.name}}</option>
                                                         </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-form-element">
+                                                <label class="slds-form-element__label" for="select-template">Template</label>
+                                                <div class="slds-form-element__control">
+                                                    <div class="slds-select_container">
+                                                        <select ng-model=""
                                                     </div>
                                                 </div>
                                             </div>
@@ -85,7 +93,29 @@
                                         escape:false,
                                         timeout:60000
                                     }
-                                )
+                                );
+                                return deferred.promise;
+                            }
+
+                            factoryObj.ObtainTemplateList = function(folderId){
+                                var deferred = $q.defer();
+                                Visualforce.remoting.Manager.invokeAction(
+                                    '{!$RemoteAction.CaseEmailAttachmentsActionExt.ObtainEmailTemplates}',
+                                    folderId,
+                                    function(result,event){
+                                        $rootScope.$apply(function(){
+                                            if(event.status){
+                                                deferred.resolve(result);
+                                            } else {
+                                                deferred.reject(event.message);
+                                            }
+                                        });
+                                    },
+                                    {
+                                        escape:false,
+                                        timeout:60000
+                                    }
+                                );
                                 return deferred.promise;
                             }
                             return factoryObj;
@@ -100,13 +130,18 @@
                             //variable hold list of Email Template folders
                             $scope.folderList = [];
                             //variable to hold selected folder
-                            $scope.templateFolder = {};
+                            $scope.templateFolder = '';
+                            //variable to hold the template Id
+                            $scope.templateId = '';
                             /**
                              * function responsible for toggling the visibility
                              * of the Template selection area
                              **/
                             $scope.toggleTemplateSelection = function(){
                                 $scope.emailTemplateSelectionAccordion['slds-is-open']  = !$scope.emailTemplateSelectionAccordion['slds-is-open'];
+                            }
+                            $scope.selectFolder = function(){
+                                
                             }
                             /**
                              * function that will be called to represent the initialization
