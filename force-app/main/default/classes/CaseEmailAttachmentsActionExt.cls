@@ -28,7 +28,7 @@ public with sharing class CaseEmailAttachmentsActionExt {
     @RemoteAction
     public static Map<String,String> ObtainEmailTemplateFolders(){
         //get the folders
-        List<Folder> folderList = [SELECT Id, DeveloperName, Name, Type FROM Folder WHERE Type='Email template'];
+        List<Folder> folderList = [SELECT Id, DeveloperName, Name, Type FROM Folder WHERE Type='Email'];
         Map<String,String> returnMap = new Map<String,String>();
         for(Folder f:folderList){
             returnMap.put(f.Name,f.Id);

@@ -45,7 +45,9 @@
                                                 <label class="slds-form-element__label" for="select-template-folder">Template Folder</label>
                                                 <div class="slds-form-element__control">
                                                     <div class="slds-select_container">
-                                                        <select ng-model="templateFolder" name="select-template-folder" multiple="false" ng-options="option.name for option in folderList"></select>
+                                                        <select ng-model="templateFolder" name="select-template-folder" multiple="false">
+                                                            <option ng-repeat="option in folderList value="{{option.id}}">{{option.name}}</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -116,8 +118,7 @@
                                 SFDCFactory.ObtainFolderList().then(
                                     function(result){
                                         for(key in result){
-                                            var obj = { 'name':key, 'id':result[key]};
-                                            $log.info('Transformed Object: ' + JSON.stringify(obj));
+                                            var obj = { 'name':key, 'id':result[key] };
                                             $scope.folderList.push(obj);
                                         }
                                     },
