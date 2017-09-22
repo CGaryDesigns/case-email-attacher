@@ -170,9 +170,9 @@
                             //variable to hold list of Email Templates
                             $scope.templateList = [];
                             //variable to hold selected folder
-                            $scope.templateFolder = {};
+                            $scope.templateFolder = [];
                             //variable to hold the template Id
-                            $scope.templateId = '';
+                            $scope.templateId = [];
                             $scope.caseId = '{!case.Id}';
                             $scope.contactId = '{!case.ContactId}';
                             $scope.emailData = {};
@@ -185,6 +185,7 @@
                                 $scope.emailTemplateSelectionAccordion['slds-is-open']  = !$scope.emailTemplateSelectionAccordion['slds-is-open'];
                             }
                             $scope.selectFolder = function(folderId){
+                                folderId = $scope.templateFolder[0].id;
                                 SFDCFactory.ObtainTemplateList(folderId).then(
                                     function(result){
                                         $scope.templateList = [];
