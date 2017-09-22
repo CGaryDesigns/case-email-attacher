@@ -60,7 +60,7 @@ global with sharing class CaseEmailAttachmentsActionExt {
      * @param String contactId                      - the Contact Id to use to 
      * @return String emailbody                     - the email body to use
      **/
-    @RemotAction
+    @RemoteAction
     global static String GetCompiledEmailBody(String templateId, String caseId, String contactId){
         Messaging.SingleEmailMessage mess = Messaging.renderStoredEmailTemplate(templateId, contactId, caseId);
         return JSON.serialize(mess);
