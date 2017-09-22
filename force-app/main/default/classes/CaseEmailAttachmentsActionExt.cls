@@ -76,7 +76,7 @@ global with sharing class CaseEmailAttachmentsActionExt {
         List<ContentDocument> fileList = [SELECT Id, Title, LatestPublishedVersionId FROM ContentDocument WHERE ParentId = :caseId ];
         Map<String,String> returnMap = new Map<String,String>();
         for(ContentDocument doc:fileList){
-            returnMap.put(doc.LastPublishedVersionId,doc.Title);
+            returnMap.put(doc.LatestPublishedVersionId,doc.Title);
         }
         return returnMap;
     }
