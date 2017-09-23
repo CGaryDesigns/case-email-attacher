@@ -89,11 +89,11 @@ global with sharing class CaseEmailAttachmentsActionExt {
      * @param List<String> contentIds               - a list of content Ids as attachments
      **/
     @RemoteAction
-    global static void SendEmail(String templatId, String caseId, String contactId, String[] contentIds){
+    global static void SendEmail(String templateId, String caseId, String contactId, String[] contentIds){
         Messaging.SingleEmailMessage mess = Messaging.renderStoredEmailTemplate(templateId, contactId, caseId);
         mess.setEntityAttachments(contentIds);
         mess.setSaveAsActivity(true);
-        Messaging.SendEmailResult resList = Messaging.sendEmail(new Messaging.Email[]{mess});
+        List<Messaging.SendEmailResult> resList = Messaging.sendEmail(new Messaging.Email[]{mess});
 
     }
 }
