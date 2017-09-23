@@ -76,7 +76,7 @@ global with sharing class CaseEmailAttachmentsActionExt {
         Map<String,String> returnMap = new Map<String,String>();
         List<ContentDocumentLink> cdlList = [SELECT Id, ContentDocumentId, ContentDocument.LatestPublishedVersionId, ContentDocument.Title FROM ContentDocumentLink WHERE LinkedEntityId = :caseId];
         for(ContentDocumentLink cdl:cdlList){
-            returnMap.put(cdl.LatestPublishedVersionId,cdl.ContentDocument.Title);
+            returnMap.put(cdl.ContentDocumentId,cdl.ContentDocument.Title);
         }
         return returnMap;
     }
