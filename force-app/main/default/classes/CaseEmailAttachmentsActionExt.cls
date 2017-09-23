@@ -74,17 +74,9 @@ global with sharing class CaseEmailAttachmentsActionExt {
     @RemoteAction
     global static Map<String,String> GetCaseAttachments(String caseId){
         Map<String,String> returnMap = new Map<String,String>();
-        List<EmailMessage> caseEmails = [SELECT Id, ContentDocumentIds, Subject FROM EmailMessage WHERE ParentId = :caseId];
-        for(EmailMessage caseEmail:caseEmails){
-            //split the ContentDocumentIds fields into actual ContentDocumentIds
-            List<Id> contentDocIdList = caseEmail.ContentDocumentIds.split(';');
-            for(String contentDocId:contentDocIdList){
-                returnMap.put(contentDocId,caseEmail.Subject);
-            }
-        }
-        List<ContentDocument> fileList = [SELECT Id, Title, LatestPublishedVersionId FROM ContentDocument WHERE ParentId = :caseId ];
-        for(ContentDocument doc:fileList){
-            returnMap.put(doc.LatestPublishedVersionId,doc.Title);
+        List<ContentDocumentLink> cdlList = [SELECT Id, ContentDocumentId, ContentDocument.Title FROM ContentDocumentLink WHERE LinkedEntityId = :caseId];
+        for(ContentDocumentLink cdl:cdlList){
+            returnMap.put(cdl.ContentDocumentId,cdl.ContentDocument.Title);
         }
         return returnMap;
     }
