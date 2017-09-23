@@ -77,7 +77,7 @@ global with sharing class CaseEmailAttachmentsActionExt {
         List<EmailMessage> caseEmails = [SELECT Id, ContentDocumentIds, Subject FROM EmailMessage WHERE ParentId = :caseId];
         for(EmailMessage caseEmail:caseEmails){
             //split the ContentDocumentIds fields into actual ContentDocumentIds
-            List<String> contentDocIdList = caseEmail.ContentDocumentIds.split(';');
+            List<Id> contentDocIdList = caseEmail.ContentDocumentIds.split(';');
             for(String contentDocId:contentDocIdList){
                 returnMap.put(contentDocId,caseEmail.Subject);
             }
