@@ -92,7 +92,8 @@ global with sharing class CaseEmailAttachmentsActionExt {
     global static void SendEmail(String templatId, String caseId, String contactId, String[] contentIds){
         Messaging.SingleEmailMessage mess = Messaging.renderStoredEmailTemplate(templateId, contactId, caseId);
         mess.setEntityAttachments(contentIds);
+        mess.setSaveAsActivity(true);
         Messaging.SendEmailResult resList = Messaging.sendEmail(new Messaging.Email[]{mess});
-        
+
     }
 }
