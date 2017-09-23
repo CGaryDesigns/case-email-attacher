@@ -84,17 +84,25 @@
                                                     <div class="slds-form-element">
                                                         <label class="slds-checkbox_toggle slds-grid">
                                                             <span class="slds-form-element__label slds-m-bottom_none">{{fileItem.name}}</span>
-                                                            <input type="checkbox" aria-describedby="toggle-desc" ng-model="selectedFilesToSend[fileItem.id]" ng-true-value="true" ng-false-value="false"/>
+                                                            <input type="checkbox" aria-describedby="toggle-desc" ng-model="selectedFilesToSend[fileItem.id]" ng-true-value="true" ng-false-value="false" ng-change="!selectedFilesToSend[fileItem.id]"/>
                                                             <span id="toggle-desc" class="slds-checkbox_faux_container" aria-live="assertive">
-                                                                    <span class="slds-checkbox_faux"></span>
-                                                                    <span class="slds-checkbox_on">Enabled</span>
-                                                                    <span class="slds-checkbox_off">Disabled</span>
+                                                                <span class="slds-checkbox_faux"></span>
+                                                                <span class="slds-checkbox_on">Enabled</span>
+                                                                 <span class="slds-checkbox_off">Disabled</span>
                                                             </span>
                                                         </label>
                                                     </div>
                                                     
                                                 </li>
                                             </ul>
+                                        </div>
+
+                                        <div class="slds-text-body_regular">
+                                            <button class="slds-button slds-button_stateful slds-not-selected slds-button_brand" aria-live="assertive" ng-click="sendEmail()">
+                                                <span class="slds-text-not-selected">
+                                                    Send Email
+                                                </span>
+                                            </button> 
                                         </div>
 
                                     </div>
@@ -179,6 +187,30 @@
                                 return deferred.promise;
 
                             }
+                            factoryObj.SendEmail = function(templateId, caseId, contactId, documentIdArray){
+                                var deferred = $q.defer();
+                                Visualforce.remoting.Manager.invokeAction(
+                                    '{!$RemoteAction.CaseEmailAttachmentsActionExt.SendEmail}',
+                                    templateId,
+                                    caseId,
+                                    contactId,
+                                    documentIdArray,
+                                    function(result,event){
+                                        $rootScope.$apply(function(){
+                                            if(event.status){
+                                                deferred.resolve(result);
+                                            } else {
+                                                deferred.reject(event.message);
+                                            }
+                                        });
+                                    },
+                                    {
+                                        escape:false,
+                                        timeout:60000
+                                    }
+                                );
+                                return deferred.promise;
+                            }
 
                             factoryObj.GetFileList = function(caseId){
                                 var deferred = $q.defer();
@@ -261,6 +293,24 @@
                                     }
                                 );
                             }
+
+                            $scope.sendEmail = function(){
+                                //convert that object into a list of documents
+                                var documentIdArray = [];
+                                for(key in $scope.selectedFilesToSend){
+                                    if($scope.selectedFilesToSend[key]){
+                                        documentIdArray.push(key);
+                                    }
+                                }
+                                SFDCFactory.SendEmail($scope.templateId[0].id,$scope.caseId,$scope.contactId,documentIdArray).then(
+                                    function(result){
+
+                                    },
+                                    function(rejection){
+
+                                    }
+                                );
+                            }
                             /**
                              * function that will be called to represent the initialization
                              * all processes that need to be run to set up the page are to be called
@@ -280,7 +330,7 @@
                                         }
                                         for(key in resultArray[1]){
                                             var obj = { 'name':resultArray[1][key], 'id':key };
-                                            $scope.selectedFilesToSend[key] = false;
+                                            $scope.selectedFilesToSend[key] = true;
                                             $scope.fileList.push(obj);
                                         }
                                     },
@@ -289,19 +339,6 @@
                                     }
                                 )
                                 //populate the folder select list
-                                /*
-                                SFDCFactory.ObtainFolderList().then(
-                                    function(result){
-                                        for(key in result){
-                                            var obj = { 'name':key, 'id':result[key] };
-                                            $scope.folderList.push(obj);
-                                        }
-                                    },
-                                    function(reject){
-                                        $log.error('There was a problem: ' + reject);
-                                    }
-                                );
-                                */
                                 //signal that the application has started
                                 $log.info('Application Started.');
                             }

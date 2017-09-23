@@ -80,4 +80,19 @@ global with sharing class CaseEmailAttachmentsActionExt {
         }
         return returnMap;
     }
+
+    /**
+     * @description - responsible for sending email with attachments
+     * @param String templateId                     - the id of the template ot use
+     * @param String caseId                         - the id of the case
+     * @param String contactId                      - the id of the contact
+     * @param List<String> contentIds               - a list of content Ids as attachments
+     **/
+    @RemoteAction
+    global static void SendEmail(String templatId, String caseId, String contactId, String[] contentIds){
+        Messaging.SingleEmailMessage mess = Messaging.renderStoredEmailTemplate(templateId, contactId, caseId);
+        mess.setEntityAttachments(contentIds);
+        Messaging.SendEmailResult resList = Messaging.sendEmail(new Messaging.Email[]{mess});
+        
+    }
 }
