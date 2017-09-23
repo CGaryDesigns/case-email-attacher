@@ -90,8 +90,18 @@ global with sharing class CaseEmailAttachmentsActionExt {
      **/
     @RemoteAction
     global static void SendEmail(String templateId, String caseId, String contactId, String[] contentIds){
+        //get the content version IDs of the content documents
+        Set<Id> contentIdSet = new Set<Id>();
+        contentIdSet.addAll(contentIds);
+        List<ContentDocument> cdList = [SELECT Id, LatestPublishedVersionId FROM ContentDocument WHERE Id IN :contentIdSet];
+        Set<Id> contentVersionIdSet = new Set<Id>();
+        for(ContentDocument cd:cdList){
+            contentVersionIdSet.add(cd.LatestPublishedVersionId);
+        }
+        List<String> contentVersionIdList = new List<String>();
+        contentVersionIdList.addAll(contentVersionIdSet);
         Messaging.SingleEmailMessage mess = Messaging.renderStoredEmailTemplate(templateId, contactId, caseId);
-        mess.setEntityAttachments(contentIds);
+        mess.setEntityAttachments(contentVersionIdList);
         mess.setSaveAsActivity(true);
         List<Messaging.SendEmailResult> resList = Messaging.sendEmail(new Messaging.Email[]{mess});
 
