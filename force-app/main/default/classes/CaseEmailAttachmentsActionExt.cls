@@ -92,7 +92,10 @@ global with sharing class CaseEmailAttachmentsActionExt {
     global static void SendEmail(String templateId, String caseId, String contactId, List<String> contentIds){
         //get the content version IDs of the content documents
         Set<Id> contentIdSet = new Set<Id>();
-        contentIdSet.addAll(contentIds);
+        for(String contentId:contentIds){
+            contentIdSet.add(contentId);
+        }
+        //contentIdSet.addAll(contentIds);
         List<ContentDocument> cdList = [SELECT Id, LatestPublishedVersionId FROM ContentDocument WHERE Id IN :contentIdSet];
         Set<Id> contentVersionIdSet = new Set<Id>();
         for(ContentDocument cd:cdList){
