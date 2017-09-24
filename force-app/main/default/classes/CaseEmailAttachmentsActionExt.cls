@@ -89,7 +89,7 @@ global with sharing class CaseEmailAttachmentsActionExt {
      * @param List<String> contentIds               - a list of content Ids as attachments
      **/
     @RemoteAction
-    global static void SendEmail(String templateId, String caseId, String contactId, String[] contentIds){
+    global static void SendEmail(String templateId, String caseId, String contactId, List<String> contentIds){
         //get the content version IDs of the content documents
         Set<Id> contentIdSet = new Set<Id>();
         contentIdSet.addAll(contentIds);
@@ -99,7 +99,10 @@ global with sharing class CaseEmailAttachmentsActionExt {
             contentVersionIdSet.add(cd.LatestPublishedVersionId);
         }
         List<String> contentVersionIdList = new List<String>();
-        contentVersionIdList.addAll(contentVersionIdSet);
+        for(String contentVersionId:contentVersionIdSet){
+            contentVersionIdList.add(contentVersionId);
+        }
+        //contentVersionIdList.addAll(contentVersionIdSet);
         Messaging.SingleEmailMessage mess = Messaging.renderStoredEmailTemplate(templateId, contactId, caseId);
         mess.setEntityAttachments(contentVersionIdList);
         mess.setSaveAsActivity(true);
