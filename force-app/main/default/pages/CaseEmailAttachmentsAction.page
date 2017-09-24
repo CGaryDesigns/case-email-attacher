@@ -45,17 +45,13 @@
                                                 <label class="slds-form-element__label" for="select-template-folder">Template Folder</label>
                                                 <div class="slds-form-element__control">
                                                     <div class="slds-select_container">
-                                                        <select ng-model="templateFolder" name="select-template-folder" multiple="false" size="1" class="slds-select" ng-options="option.name for option in folderList">
+                                                        <select ng-model="templateFolder" name="select-template-folder" multiple="false" size="1" class="slds-select" ng-options="option.name for option in folderList" ng-change="selectFolder()">
                                                             
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="slds-form-element">
-                                                <button class="slds-button slds-button_neutral">
-                                                    <span class="slds-text-not-selected" ng-click="selectFolder()">Select Folder</span>
-                                                </button>
-                                            </div>
+                                           
                                             <div class="slds-form-element">
                                                 <label class="slds-form-element__label" for="select-template">Template</label>
                                                 <div class="slds-form-element__control">

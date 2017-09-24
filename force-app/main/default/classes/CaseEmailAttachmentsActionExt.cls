@@ -95,7 +95,6 @@ global with sharing class CaseEmailAttachmentsActionExt {
         for(String contentId:contentIds){
             contentIdSet.add(contentId);
         }
-        //contentIdSet.addAll(contentIds);
         List<ContentDocument> cdList = [SELECT Id, LatestPublishedVersionId FROM ContentDocument WHERE Id IN :contentIdSet];
         Set<Id> contentVersionIdSet = new Set<Id>();
         for(ContentDocument cd:cdList){
@@ -105,7 +104,6 @@ global with sharing class CaseEmailAttachmentsActionExt {
         for(String contentVersionId:contentVersionIdSet){
             contentVersionIdList.add(contentVersionId);
         }
-        //contentVersionIdList.addAll(contentVersionIdSet);
         Messaging.SingleEmailMessage mess = Messaging.renderStoredEmailTemplate(templateId, contactId, caseId);
         mess.setEntityAttachments(contentVersionIdList);
         mess.setSaveAsActivity(true);
