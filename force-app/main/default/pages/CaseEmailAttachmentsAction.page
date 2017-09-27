@@ -21,92 +21,20 @@
     <apex:slds />
 
     <div class="slds-scope" ng-app="pageApp">
-        <div class="slds-grid" ng-controller="MainController">
-            <div class="slds-col">
-                <ul class="slds-accordion">
-                    <li class="slds-accordion__list-item">
-                        <section ng-class="emailTemplateSelectionAccordion">
-                            <div class="slds-accordion__summary">
-                                <h3 class="slds-text-heading_small slds-accordion__summary-heading">
-                                    <button aura-controls="accordion-details-01" aria-expanded="false" class="slds-button slds-button_reset slds-accordion__summary-action" ng-click="toggleTemplateSelection();">
-                                        <svg class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
-                                            <use xmlns:link="https://www.w3org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS,'/assets/icons/utility-sprite/svg/symbols.svg#switch')}"/>
-                                        </svg>
-                                        <span class="slds-truncate" title="Template Selection">Template Selection</span>
-                                    </button>
-                                </h3>
-                            </div>
-
-                            <div aria-hidden="true" class="slds-accordion__content" id="accordion-details-01">
-                                <div class="slds-grid slds-grid_pull-padded-medium">
-                                    <div class="slds-col slds-p-horizontal_medium">
-                                        <div class="slds-form slds-form_stacked">
-                                            <div class="slds-form-element">
-                                                <label class="slds-form-element__label" for="select-template-folder">Template Folder</label>
-                                                <div class="slds-form-element__control">
-                                                    <div class="slds-select_container">
-                                                        <select ng-model="templateFolder" name="select-template-folder" multiple="false" size="1" class="slds-select" ng-options="option.name for option in folderList" ng-change="selectFolder()">
-                                                            
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                           
-                                            <div class="slds-form-element">
-                                                <label class="slds-form-element__label" for="select-template">Template</label>
-                                                <div class="slds-form-element__control">
-                                                    <div class="slds-select_container">
-                                                        <select ng-model="templateId" name="select-template" multiple="false" size="1" class="slds-select" ng-options="option.name for option in templateList">
-
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="slds-form-element">
-                                                <button class="slds-button slds-button_neutral">
-                                                    <span class="slds-text-not-selected" ng-click="generateTemplate()">Generate Template</span>
-                                                </button>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="slds-text-body_regular">
-                                            {{emailData.debug}}
-                                        </div>
-
-                                        <div class="slds-text-body_regular">
-                                            <ul class="slds-has-dividers_top">
-                                                <li ng-repeat="fileItem in fileList">
-                                                    <div class="slds-form-element">
-                                                        <label class="slds-checkbox_toggle slds-grid">
-                                                            <span class="slds-form-element__label slds-m-bottom_none">{{fileItem.name}}</span>
-                                                            <input type="checkbox" aria-describedby="toggle-desc" ng-model="selectedFilesToSend[fileItem.id]" ng-true-value="true" ng-false-value="false" ng-change="!selectedFilesToSend[fileItem.id]"/>
-                                                            <span id="toggle-desc" class="slds-checkbox_faux_container" aria-live="assertive">
-                                                                <span class="slds-checkbox_faux"></span>
-                                                                <span class="slds-checkbox_on">Enabled</span>
-                                                                 <span class="slds-checkbox_off">Disabled</span>
-                                                            </span>
-                                                        </label>
-                                                    </div>
-                                                    
-                                                </li>
-                                            </ul>
-                                        </div>
-
-                                        <div class="slds-text-body_regular">
-                                            <button class="slds-button slds-button_stateful slds-not-selected slds-button_brand" aria-live="assertive" ng-click="sendEmail()">
-                                                <span class="slds-text-not-selected">
-                                                    Send Email
-                                                </span>
-                                            </button> 
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </li>
-                </ul>
+        <div class="slds-grid" ng-controller="MainController" id="mainArea">
+            <div class="slds-col" id="mainColumn">
+                <div class="slds-grid" id="headerGrid">
+                    <div class="slds-col" id="templatePickerCol">
+                        <button class="slds-button slds-button_stateful slds-button_brand" aria-live="assertive">
+                            <span class="slds-text-not-selected">
+                                <svg class="slds-button__icon_stateful slds-button__icon_left" aria-hidden="true">
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS,'/assets/icons/standard-sprite/symbols.svg#template')}"/>
+                                    Templates
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                </div>  
             </div>
         </div>
     </div>
@@ -116,97 +44,6 @@
                         .module('pageApp',[])
                         .factory('SFDCFactory',['$rootScope','$log','$q',function($rootScope,$log,$q){
                             var factoryObj = {};
-                            factoryObj.ObtainFolderList = function(){
-                                var deferred = $q.defer();
-                                Visualforce.remoting.Manager.invokeAction(
-                                    '{!$RemoteAction.CaseEmailAttachmentsActionExt.ObtainEmailTemplateFolders}',
-                                    function(result,event){
-                                        $rootScope.$apply(function(){
-                                            if(event.status){
-                                                deferred.resolve(result);
-                                            } else {
-                                                deferred.reject(event.message);
-                                            }
-                                        });
-                                    },
-                                    {
-                                        escape:false,
-                                        timeout:60000
-                                    }
-                                );
-                                return deferred.promise;
-                            }
-
-                            factoryObj.ObtainTemplateList = function(folderId){
-                                var deferred = $q.defer();
-                                Visualforce.remoting.Manager.invokeAction(
-                                    '{!$RemoteAction.CaseEmailAttachmentsActionExt.ObtainEmailTemplates}',
-                                    folderId,
-                                    function(result,event){
-                                        $rootScope.$apply(function(){
-                                            if(event.status){
-                                                deferred.resolve(result);
-                                            } else {
-                                                deferred.reject(event.message);
-                                            }
-                                        });
-                                    },
-                                    {
-                                        escape:false,
-                                        timeout:60000
-                                    }
-                                );
-                                return deferred.promise;
-                            }
-
-                            factoryObj.ObtainGeneratedEmail = function(templateId, caseId, contactId){
-                                var deferred = $q.defer();
-                                Visualforce.remoting.Manager.invokeAction(
-                                    '{!$RemoteAction.CaseEmailAttachmentsActionExt.GetCompiledEmailBody}',
-                                    templateId,
-                                    caseId,
-                                    contactId,
-                                    function(result,event){
-                                        $rootScope.$apply(function(){
-                                            if(event.status){
-                                                deferred.resolve(JSON.parse(result));
-                                            } else {
-                                                deferred.reject(event.message);
-                                            }
-                                        });
-                                    },
-                                    {
-                                        escape:false,
-                                        timeout:60000
-                                    }
-                                );
-                                return deferred.promise;
-
-                            }
-                            factoryObj.SendEmail = function(templateId, caseId, contactId, documentIdArray){
-                                var deferred = $q.defer();
-                                Visualforce.remoting.Manager.invokeAction(
-                                    '{!$RemoteAction.CaseEmailAttachmentsActionExt.SendEmail}',
-                                    templateId,
-                                    caseId,
-                                    contactId,
-                                    documentIdArray,
-                                    function(result,event){
-                                        $rootScope.$apply(function(){
-                                            if(event.status){
-                                                deferred.resolve(result);
-                                            } else {
-                                                deferred.reject(event.message);
-                                            }
-                                        });
-                                    },
-                                    {
-                                        escape:false,
-                                        timeout:60000
-                                    }
-                                );
-                                return deferred.promise;
-                            }
 
                             factoryObj.GetFileList = function(caseId){
                                 var deferred = $q.defer();
@@ -233,109 +70,13 @@
                             return factoryObj;
                         }])
                         .controller('MainController',['$scope','$window','$log','$q','SFDCFactory',function($scope,$window,$log,$q,SFDCFactory){
-                            
-                            //the object that controls the class for showing template info
-                            $scope.emailTemplateSelectionAccordion = {
-                                "slds-accordion__section":true,
-                                "slds-is-open":false
-                            };
-                            //variable to hold list of case files
-                            $scope.fileList = [];
-                            //variable hold list of Email Template folders
-                            $scope.folderList = [];
-                            //variable to hold list of Email Templates
-                            $scope.templateList = [];
-                            //variable to hold selected folder
-                            $scope.templateFolder = [];
-                            //variable to hold the template Id
-                            $scope.templateId = [];
-                            $scope.caseId = '{!case.Id}';
-                            $scope.contactId = '{!case.ContactId}';
-                            $scope.emailData = {};
-                            $scope.selectedFilesToSend = {};
-                            
-                            /**
-                             * function responsible for toggling the visibility
-                             * of the Template selection area
-                             **/
-                            $scope.toggleTemplateSelection = function(){
-                                $scope.emailTemplateSelectionAccordion['slds-is-open']  = !$scope.emailTemplateSelectionAccordion['slds-is-open'];
-                            }
-                            $scope.selectFolder = function(){
-                                folderId = $scope.templateFolder[0].id;
-                                SFDCFactory.ObtainTemplateList(folderId).then(
-                                    function(result){
-                                        $scope.templateList = [];
-                                        for(key in result){
-                                            var obj = {'name':key,'id':result[key]};
-                                            $scope.templateList.push(obj);
-                                        }
-                                    },
-                                    function(reject){
-                                        $log.error('There was a problem: ' + reject);
-                                    }
-                                );
-                            }
 
-                            $scope.generateTemplate = function(){
-                                var templateId = $scope.templateId[0].id;
-                                SFDCFactory.ObtainGeneratedEmail(templateId,$scope.caseId,$scope.contactId).then(
-                                    function(result){
-                                        $log.info(result);
-                                        $scope.emailData = result;
-                                    },
-                                    function(reject){
-                                        $log.error('There was a problem: ' + reject);
-                                    }
-                                );
-                            }
-
-                            $scope.sendEmail = function(){
-                                //convert that object into a list of documents
-                                var documentIdArray = [];
-                                for(key in $scope.selectedFilesToSend){
-                                    if($scope.selectedFilesToSend[key]){
-                                        documentIdArray.push(key);
-                                    }
-                                }
-                                SFDCFactory.SendEmail($scope.templateId[0].id,$scope.caseId,$scope.contactId,documentIdArray).then(
-                                    function(result){
-
-                                    },
-                                    function(rejection){
-
-                                    }
-                                );
-                            }
                             /**
                              * function that will be called to represent the initialization
                              * all processes that need to be run to set up the page are to be called
                              * here.
                              **/
                             var initialize = function(){
-                                var InitializationPromiseArray = [
-                                    SFDCFactory.ObtainFolderList(),
-                                    SFDCFactory.GetFileList($scope.caseId)
-                                ];
-                                $q.all(InitializationPromiseArray).then(
-                                    function(resultArray){
-                                        $log.info(resultArray);
-                                        for(key in resultArray[0]){
-                                            var obj = { 'name':key, 'id':resultArray[0][key] };
-                                            $scope.folderList.push(obj);
-                                        }
-                                        for(key in resultArray[1]){
-                                            var obj = { 'name':resultArray[1][key], 'id':key };
-                                            $scope.selectedFilesToSend[key] = true;
-                                            $scope.fileList.push(obj);
-                                        }
-                                    },
-                                    function(rejectionArray){
-                                        $log.error(rejectionArray);
-                                    }
-                                )
-                                //populate the folder select list
-                                //signal that the application has started
                                 $log.info('Application Started.');
                             }
 
