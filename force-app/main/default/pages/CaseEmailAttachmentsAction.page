@@ -29,8 +29,9 @@
                             <span class="slds-text-not-selected">
                                 <svg class="slds-button__icon_stateful slds-button__icon_left" aria-hidden="true">
                                     <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS,'/assets/icons/standard-sprite/symbols.svg#template')}"/>
-                                    Templates
+                                    
                                 </svg>
+                                Templates
                             </span>
                         </button>
                     </div>
